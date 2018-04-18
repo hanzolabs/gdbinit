@@ -38,7 +38,7 @@
 #     - Other fixes and additions from previous commits
 #
 #   Version 8.0.4 (08/05/2013)
-#     - Detect automatically 32 or 64 bits archs using sizeof(void*). 
+#     - Detect automatically 32 or 64 bits archs using sizeof(void*).
 #       Thanks to Tyilo for the simple but very effective idea!
 #     - Typo in hexdump command also fixed by vuquangtrong.
 #     - Add shortcuts to attach to VMware kernel debugging gdb stub (kernel32 and kernel64)
@@ -75,7 +75,7 @@ set $ARM = 0
 set $COLOREDPROMPT = 1
 # color the first line of the disassembly - default is green, if you want to change it search for
 # SETCOLOR1STLINE and modify it :-)
-set $SETCOLOR1STLINE = 0
+set $SETCOLOR1STLINE = 1
 # set to 0 to remove display of objectivec messages (default is 1)
 set $SHOWOBJECTIVEC = 1
 # set to 0 to remove display of cpu registers (default is 1)
@@ -100,7 +100,7 @@ set $X86FLAVOR = 0
 set $USECOLOR = 1
 # to use with remote KDP
 set $KDP64BITS = -1
-set $64BITS = 0
+set $64BITS = 1
 
 set confirm off
 set verbose off
@@ -149,35 +149,35 @@ define color
  if $USECOLOR == 1
  	# BLACK
  	if $arg0 == 0
- 		echo \033[30m
+ 		echo \033[1m\033[30m
  	else
  		# RED
 	 	if $arg0 == 1
-	 		echo \033[31m
+	 		echo \033[1m\033[31m
 	 	else
 	 		# GREEN
 	 		if $arg0 == 2
-	 			echo \033[32m
+	 			echo \033[1m\033[32m
 	 		else
 	 			# YELLOW
 	 			if $arg0 == 3
-	 				echo \033[33m
+	 				echo \033[1m\033[33m
 	 			else
 	 				# BLUE
 	 				if $arg0 == 4
-	 					echo \033[34m
+	 					echo \033[1m\033[34m
 	 				else
 	 					# MAGENTA
 	 					if $arg0 == 5
-	 						echo \033[35m
+	 						echo \033[1m\033[35m
 	 					else
 	 						# CYAN
 	 						if $arg0 == 6
-	 							echo \033[36m
+	 							echo \033[1m\033[36m
 	 						else
 	 							# WHITE
 	 							if $arg0 == 7
-	 								echo \033[37m
+	 								echo \033[1m\033[37m
 	 							end
 	 						end
 	 					end
@@ -325,7 +325,7 @@ Syntax: bp LOCATION
 end
 
 
-define bpc 
+define bpc
     if $argc != 1
         help bpc
     else
@@ -468,42 +468,42 @@ define flagsarm
 # Overflow (V), bit 28
     # negative/less than (N), bit 31 of CPSR
     if (($cpsr >> 0x1f) & 1)
-        printf "N "
+        printf "N"
 	    set $_n_flag = 1
     else
-        printf "n "
+        printf "n"
 	    set $_n_flag = 0
     end
     # zero (Z), bit 30
     if (($cpsr >> 0x1e) & 1)
-        printf "Z "
+        printf "Z"
 	    set $_z_flag = 1
     else
-        printf "z "
+        printf "z"
 	    set $_z_flag = 0
     end
     # Carry/Borrow/Extend (C), bit 29
     if (($cpsr >> 0x1d) & 1)
-        printf "C "
+        printf "C"
     	set $_c_flag = 1
     else
-        printf "c "
+        printf "c"
 	    set $_c_flag = 0
     end
     # Overflow (V), bit 28
     if (($cpsr >> 0x1c) & 1)
-        printf "V "
+        printf "V"
         set $_v_flag = 1
     else
-        printf "v "
+        printf "v"
         set $_v_flag = 0
     end
-    # Sticky overflow (Q), bit 27    
+    # Sticky overflow (Q), bit 27
     if (($cpsr >> 0x1b) & 1)
-        printf "Q "
+        printf "Q"
         set $_q_flag = 1
     else
-        printf "q "
+        printf "q"
         set $_q_flag = 0
     end
     # Java state bit (J), bit 24
@@ -511,56 +511,56 @@ define flagsarm
     # J = 0 The processor is in Thumb state.
     # J = 1 The processor is in ThumbEE state.
     if (($cpsr >> 0x18) & 1)
-        printf "J "
+        printf "J"
         set $_j_flag = 1
     else
-        printf "j "
+        printf "j"
         set $_j_flag = 0
     end
     # Data endianness bit (E), bit 9
     if (($cpsr >> 9) & 1)
-        printf "E "
+        printf "E"
         set $_e_flag = 1
     else
-        printf "e "
+        printf "e"
         set $_e_flag = 0
     end
     # Imprecise abort disable bit (A), bit 8
-    # The A bit is set to 1 automatically. It is used to disable imprecise data aborts. 
+    # The A bit is set to 1 automatically. It is used to disable imprecise data aborts.
     # It might not be writable in the Nonsecure state if the AW bit in the SCR register is reset.
     if (($cpsr >> 8) & 1)
-        printf "A "
+        printf "A"
         set $_a_flag = 1
     else
-        printf "a "
+        printf "a"
         set $_a_flag = 0
     end
     # IRQ disable bit (I), bit 7
     # When the I bit is set to 1, IRQ interrupts are disabled.
     if (($cpsr >> 7) & 1)
-        printf "I "
+        printf "I"
         set $_i_flag = 1
     else
-        printf "i "
+        printf "i"
         set $_i_flag = 0
     end
     # FIQ disable bit (F), bit 6
-    # When the F bit is set to 1, FIQ interrupts are disabled. 
+    # When the F bit is set to 1, FIQ interrupts are disabled.
     # FIQ can be nonmaskable in the Nonsecure state if the FW bit in SCR register is reset.
     if (($cpsr >> 6) & 1)
-        printf "F "
+        printf "F"
         set $_f_flag = 1
     else
-        printf "f "
+        printf "f"
         set $_f_flag = 0
     end
     # Thumb state bit (F), bit 5
     # if 1 then the processor is executing in Thumb state or ThumbEE state depending on the J bit
     if (($cpsr >> 5) & 1)
-        printf "T "
+        printf "T"
         set $_t_flag = 1
     else
-        printf "t "
+        printf "t"
         set $_t_flag = 0
     end
     # TODO: GE bit ?
@@ -574,66 +574,66 @@ end
 define flagsx86
     # OF (overflow) flag
     if (((unsigned int)$eflags >> 0xB) & 1)
-        printf "O "
+        printf "O"
         set $_of_flag = 1
     else
-        printf "o "
+        printf "o"
         set $_of_flag = 0
     end
     # DF (direction) flag
     if (((unsigned int)$eflags >> 0xA) & 1)
-        printf "D "
+        printf "D"
     else
-        printf "d "
+        printf "d"
     end
     # IF (interrupt enable) flag
     if (((unsigned int)$eflags >> 9) & 1)
-        printf "I "
+        printf "I"
     else
-        printf "i "
+        printf "i"
     end
     # TF (trap) flag
     if (((unsigned int)$eflags >> 8) & 1)
-        printf "T "
+        printf "T"
     else
-        printf "t "
+        printf "t"
     end
     # SF (sign) flag
     if (((unsigned int)$eflags >> 7) & 1)
-        printf "S "
+        printf "S"
         set $_sf_flag = 1
     else
-        printf "s "
+        printf "s"
         set $_sf_flag = 0
     end
     # ZF (zero) flag
     if (((unsigned int)$eflags >> 6) & 1)
-        printf "Z "
+        printf "Z"
     	set $_zf_flag = 1
     else
-        printf "z "
+        printf "z"
 	    set $_zf_flag = 0
     end
     # AF (adjust) flag
     if (((unsigned int)$eflags >> 4) & 1)
-        printf "A "
+        printf "A"
     else
-        printf "a "
+        printf "a"
     end
     # PF (parity) flag
     if (((unsigned int)$eflags >> 2) & 1)
-        printf "P "
+        printf "P"
 	    set $_pf_flag = 1
     else
-        printf "p "
+        printf "p"
     	set $_pf_flag = 0
     end
     # CF (carry) flag
     if ((unsigned int)$eflags & 1)
-        printf "C "
+        printf "C"
 	    set $_cf_flag = 1
     else
-        printf "c "
+        printf "c"
     	set $_cf_flag = 0
     end
     printf "\n"
@@ -860,7 +860,7 @@ end
 
 define regx64
     # 64bits stuff
-    printf "  "
+    #printf "  "
     # RAX
     color $COLOR_REGNAME
     printf "RAX:"
@@ -902,7 +902,7 @@ define regx64
     color $COLOR_CPUFLAGS
     flags
     color_reset
-    printf "  "
+    #printf "  "
     # RDI
     color $COLOR_REGNAME
     printf "RDI:"
@@ -943,7 +943,8 @@ define regx64
     color $COLOR_REGNAME
     printf "RIP:"
     color $COLOR_REGVAL_MODIFIED
-    printf " 0x%016lX\n  ", $rip
+    #printf " 0x%016lX\n  ", $rip
+    printf " 0x%016lX\n", $rip
     # R8
     color $COLOR_REGNAME
    	printf "R8 :"
@@ -988,7 +989,8 @@ define regx64
 	else
 	    color $COLOR_REGVAL
     end
-    printf " 0x%016lX\n  ", $r12
+    #printf " 0x%016lX\n  ", $r12
+    printf " 0x%016lX\n", $r12
     # R13
     color $COLOR_REGNAME
    	printf "R13:"
@@ -1015,7 +1017,8 @@ define regx64
 	else
 	    color $COLOR_REGVAL
     end
-    printf " 0x%016lX\n  ", $r15
+    #printf " 0x%016lX\n  ", $r15
+    printf " 0x%016lX\n", $r15
   	color $COLOR_REGNAME
     printf "CS:"
     color $COLOR_REGVAL
@@ -1062,8 +1065,8 @@ define regx86
    	# EBX
     color $COLOR_REGNAME
    	printf "EBX:"
-   	if ($ebx != $oldebx && $SHOWREGCHANGES == 1) 
-	    color $COLOR_REGVAL_MODIFIED		
+   	if ($ebx != $oldebx && $SHOWREGCHANGES == 1)
+	    color $COLOR_REGVAL_MODIFIED
    	else
 	    color $COLOR_REGVAL
    	end
@@ -1194,9 +1197,9 @@ define reg
         # call smallregisters
 	    smallregisters
         # display conditional jump routine
-	    if ($64BITS == 1)
-    	    printf "\t\t\t\t"
-    	end
+	#if ($64BITS == 1)
+    	   #printf "\t\t\t\t"
+    	#end
         dumpjump
         printf "\n"
         if ($SHOWREGCHANGES == 1)
@@ -1264,7 +1267,7 @@ define smallregisters
     	set $si  = $rsi & 0xffff
     	# from rdi
     	set $edi = $rdi & 0xffffffff
-    	set $di  = $rdi & 0xffff		
+    	set $di  = $rdi & 0xffff
     #32 bits stuff
     else
 	    # from eax
@@ -1286,7 +1289,7 @@ define smallregisters
     	# from esi
     	set $si = $esi & 0xffff
     	# from edi
-	    set $di = $edi & 0xffff		
+	    set $di = $edi & 0xffff
      end
 end
 document smallregisters
@@ -1375,7 +1378,7 @@ define dis
     end
     if $argc == 2
         disassemble $arg0 $arg1
-    end 
+    end
     if $argc > 2
         help dis
     end
@@ -1383,7 +1386,7 @@ end
 document dis
 Syntax: dis <ADDR1> <ADDR2>
 | Disassemble a specified section of memory.
-| Default is to disassemble the function surrounding the PC (program counter) of selected frame. 
+| Default is to disassemble the function surrounding the PC (program counter) of selected frame.
 | With one argument, ADDR1, the function surrounding this address is dumped.
 | Two arguments are taken as a range of memory to dump.
 end
@@ -1446,7 +1449,7 @@ end
 document hexdump
 Syntax: hexdump ADDR <NR_LINES>
 | Display a 16-byte hex/ASCII dump of memory starting at address ADDR.
-| Optional parameter is the number of lines to display if you want more than one. 
+| Optional parameter is the number of lines to display if you want more than one.
 end
 
 
@@ -1513,9 +1516,9 @@ define ddump
     	color $COLOR_SEPARATOR
     	printf "------------------------"
         printf "-------------------------------"
-        if ($64BITS == 1)
-            printf "-------------------------------------"
-	    end
+        #if ($64BITS == 1)
+        #    printf "-------------------------------------"
+	#end
 	    color_bold
 	    color $COLOR_SEPARATOR
 	    printf "[data]\n"
@@ -1642,7 +1645,7 @@ define dumpjump
 	        	set $_conditional = *(unsigned char *)($pc+1) ^ 0xD0
         		dumpjumphelper
         	end
-        end 
+        end
 ##################### X86
     else
         ## grab the first two bytes from the instruction so we can determine the jump instruction
@@ -1662,7 +1665,7 @@ define dumpjump
             	# cf != 0 or zf != 0
            		color $RED
            		printf "  Jump is NOT taken (c!=0 or z!=0)"
-          	end 
+          	end
         end
         ## opcode 0x73: JAE, JNB, JNC (jump if CF=0)
         ## opcode 0x0F83: JNC, JNB, JAE (jump if CF=0)
@@ -1675,7 +1678,7 @@ define dumpjump
             	# cf != 0
            		color $RED
    		        printf "  Jump is NOT taken (c!=0)"
-          	end 
+          	end
         end
         ## opcode 0x72: JB, JC, JNAE (jump if CF=1)
         ## opcode 0x0F82: JNAE, JB, JC
@@ -1688,7 +1691,7 @@ define dumpjump
             	# cf != 1
            		color $RED
    		        printf "  Jump is NOT taken (c!=1)"
-          	end 
+          	end
         end
         ## opcode 0x76: JBE, JNA (jump if CF=1 or ZF=1)
         ## opcode 0x0F86: JBE, JNA
@@ -1701,7 +1704,7 @@ define dumpjump
             	# cf != 1 or zf != 1
            		color $RED
            		printf "  Jump is NOT taken (c!=1 or z!=1)"
-          	end 
+          	end
         end
         ## opcode 0xE3: JCXZ, JECXZ, JRCXZ (jump if CX=0 or ECX=0 or RCX=0)
         if ($_byte1 == 0xE3)
@@ -1712,7 +1715,7 @@ define dumpjump
           	else
    	    	    color $RED
        	    	printf "  Jump is NOT taken (cx!=0 or ecx!=0)"
-          	end 
+          	end
         end
         ## opcode 0x74: JE, JZ (jump if ZF=1)
         ## opcode 0x0F84: JZ, JE, JZ (jump if ZF=1)
@@ -1725,7 +1728,7 @@ define dumpjump
                 # ZF = 0
            		color $RED
    		        printf "  Jump is NOT taken (z!=1)"
-          	end 
+          	end
         end
         ## opcode 0x7F: JG, JNLE (jump if ZF=0 and SF=OF)
         ## opcode 0x0F8F: JNLE, JG (jump if ZF=0 and SF=OF)
@@ -1737,7 +1740,7 @@ define dumpjump
          	else
    		        color $RED
    		        printf "  Jump is NOT taken (z!=0 or s!=o)"
-  	        end 
+  	        end
         end
         ## opcode 0x7D: JGE, JNL (jump if SF=OF)
         ## opcode 0x0F8D: JNL, JGE (jump if SF=OF)
@@ -1749,7 +1752,7 @@ define dumpjump
   	        else
    		        color $RED
    		        printf "  Jump is NOT taken (s!=o)"
-  	        end 
+  	        end
         end
         ## opcode: 0x7C: JL, JNGE (jump if SF != OF)
         ## opcode: 0x0F8C: JNGE, JL (jump if SF != OF)
@@ -1761,7 +1764,7 @@ define dumpjump
   	        else
         		color $RED
    		        printf "  Jump is NOT taken (s=o)"
-  	        end 
+  	        end
         end
         ## opcode 0x7E: JLE, JNG (jump if ZF = 1 or SF != OF)
         ## opcode 0x0F8E: JNG, JLE (jump if ZF = 1 or SF != OF)
@@ -1773,7 +1776,7 @@ define dumpjump
   	        else
    		        color $RED
    	        	printf "  Jump is NOT taken (zf!=1 or sf=of)"
-  	        end 
+  	        end
         end
         ## opcode 0x75: JNE, JNZ (jump if ZF = 0)
         ## opcode 0x0F85: JNE, JNZ (jump if ZF = 0)
@@ -1786,7 +1789,7 @@ define dumpjump
                 # ZF = 1
    		        color $RED
    	        	printf "  Jump is NOT taken (z!=0)"
-  	        end 
+  	        end
         end
         ## opcode 0x71: JNO (OF = 0)
         ## opcode 0x0F81: JNO (OF = 0)
@@ -1799,7 +1802,7 @@ define dumpjump
                 # OF != 0
            		color $RED
            		printf "  Jump is NOT taken (o!=0)"
-          	end 
+          	end
         end
         ## opcode 0x7B: JNP, JPO (jump if PF = 0)
         ## opcode 0x0F8B: JPO (jump if PF = 0)
@@ -1812,7 +1815,7 @@ define dumpjump
                 # PF != 0
            		color $RED
    		        printf "  Jump is taken (p!=0)"
-          	end 
+          	end
         end
         ## opcode 0x79: JNS (jump if SF = 0)
         ## opcode 0x0F89: JNS (jump if SF = 0)
@@ -1825,7 +1828,7 @@ define dumpjump
                  # SF != 0
            		color $RED
    		        printf "  Jump is NOT taken (s!=0)"
-          	end 
+          	end
         end
         ## opcode 0x70: JO (jump if OF=1)
         ## opcode 0x0F80: JO (jump if OF=1)
@@ -1838,7 +1841,7 @@ define dumpjump
                 # OF != 1
            		color $RED
    		        printf "  Jump is NOT taken (o!=1)"
-          	end 
+          	end
         end
         ## opcode 0x7A: JP, JPE (jump if PF=1)
         ## opcode 0x0F8A: JP, JPE (jump if PF=1)
@@ -1851,7 +1854,7 @@ define dumpjump
                  # PF = 0
            		color $RED
    		        printf "  Jump is NOT taken (p!=1)"
-          	end 
+          	end
         end
         ## opcode 0x78: JS (jump if SF=1)
         ## opcode 0x0F88: JS (jump if SF=1)
@@ -1864,7 +1867,7 @@ define dumpjump
                  # SF != 1
            		color $RED
            		printf "  Jump is NOT taken (s!=1)"
-          	end 
+          	end
         end
     end
 end
@@ -2025,14 +2028,14 @@ end
 # initialize variable
 set $displayobjectivec = 0
 
-define context 
+define context
     color $COLOR_SEPARATOR
     if $SHOWCPUREGISTERS == 1
 	    printf "----------------------------------------"
 	    printf "----------------------------------"
-	    if ($64BITS == 1)
-	        printf "---------------------------------------------"
-	    end
+	    #if ($64BITS == 1)
+	    #    printf "---------------------------------------------"
+	    #end
 	    color $COLOR_SEPARATOR
 	    color_bold
 	    printf "[regs]\n"
@@ -2054,9 +2057,9 @@ define context
         color $COLOR_SEPARATOR
 		printf "-------------------------"
     	printf "-----------------------------"
-	    if ($64BITS == 1)
-	        printf "-------------------------------------"
-	    end
+	    #if ($64BITS == 1)
+	    #    printf "-------------------------------------"
+	    #end
 	    color $COLOR_SEPARATOR
 	    color_bold
 	    printf "[stack]\n"
@@ -2098,31 +2101,31 @@ define context
             if $displayobjectivec == 1
                 color $COLOR_SEPARATOR
                 printf "--------------------------------------------------------------------"
-                if ($64BITS == 1)
-                    printf "---------------------------------------------"
-                end
+                #if ($64BITS == 1)
+                #    printf "---------------------------------------------"
+                #end
                 color $COLOR_SEPARATOR
                 color_bold
 	    		printf "[ObjectiveC]\n"
 	    		color_reset
       	    	color $BLACK
       		    x/s $objectivec
-         	end   
-         	set $displayobjectivec = 0     
+         	end
+         	set $displayobjectivec = 0
         end
         if $displayobjectivec == 1
             color $COLOR_SEPARATOR
           	printf "--------------------------------------------------------------------"
-          	if ($64BITS == 1)
-	            printf "---------------------------------------------"
-    	    end
+            #if ($64BITS == 1)
+	    #        printf "---------------------------------------------"
+    	    #end
     	    color $COLOR_SEPARATOR
     	    color_bold
 		    printf "[ObjectiveC]\n"
 		    color_reset
           	color $BLACK
-          	x/s $objectivec 
-        end   
+          	x/s $objectivec
+        end
     end
     color_reset
 # and this is the end of this little crap
@@ -2133,16 +2136,16 @@ define context
 
     color $COLOR_SEPARATOR
     printf "--------------------------------------------------------------------------"
-    if ($64BITS == 1)
-	    printf "---------------------------------------------"
-	end
+    #if ($64BITS == 1)
+    #	    printf "---------------------------------------------"
+    #end
 	color $COLOR_SEPARATOR
 	color_bold
     printf "[code]\n"
     color_reset
     set $context_i = $CONTEXTSIZE_CODE
     if ($context_i > 0)
-        if ($SETCOLOR1STLINE == 1)	
+        if ($SETCOLOR1STLINE == 1)
 	        color $GREEN
             if ($ARM == 1)
                 #       | $cpsr.t (Thumb flag)
@@ -2168,11 +2171,11 @@ define context
     color $COLOR_SEPARATOR
     printf "----------------------------------------"
     printf "----------------------------------------"
-    if ($64BITS == 1)
-        printf "---------------------------------------------\n"
-	else
+    #if ($64BITS == 1)
+    #    printf "---------------------------------------------\n"
+    #	else
 	    printf "\n"
-	end
+    #	end
     color_reset
 end
 document context
@@ -2304,8 +2307,8 @@ define stepoframework
         # bl and bx opcodes
         # bx Rn  => ARM bits 27-20: 0 0 0 1 0 0 1 0 , bits 7-4: 0 0 0 1 ; Thumb bits: 15-7: 0 1 0 0 0 1 1 1 0
         # blx Rn => ARM bits 27-20: 0 0 0 1 0 0 1 0 , bits 7-4: 0 0 1 1 ; Thumb bits: 15-7: 0 1 0 0 0 1 1 1 1
-        # bl # => ARM bits 27-24: 1 0 1 1 ; Thumb bits: 15-11: 1 1 1 1 0 
-        # blx # => ARM bits 31-25: 1 1 1 1 1 0 1 ; Thumb bits: 15-11: 1 1 1 1 0 
+        # bl # => ARM bits 27-24: 1 0 1 1 ; Thumb bits: 15-11: 1 1 1 1 0
+        # blx # => ARM bits 31-25: 1 1 1 1 1 0 1 ; Thumb bits: 15-11: 1 1 1 1 0
         set $_nextaddress = 0
 
         # ARM Mode
@@ -2327,7 +2330,7 @@ define stepoframework
         	set $_bit6 = ($_branchesint >> 0x6) & 1
         	set $_bit5 = ($_branchesint >> 0x5) & 1
         	set $_bit4 = ($_branchesint >> 0x4) & 1
-	
+
             #	set $_lastbyte = *(unsigned char *)($pc+3)
             #	set $_bits2724 = $_lastbyte & 0x1
             #	set $_bits3128 = $_lastbyte >> 4
@@ -2338,7 +2341,7 @@ define stepoframework
             #	set $_previousbyte = *(unsigned char *)($pc+2)
             #	set $_bits2320 = $_previousbyte >> 4
             #	printf "bits2724: %x bits2320: %x\n", $_bits2724, $_bits2320
-	
+
         	if ($_bit27 == 0 && $_bit26 == 0 && $_bit25 == 0 && $_bit24 == 1 && $_bit23 == 0 && $_bit22 == 0 && $_bit21 == 1 && $_bit20 == 0 && $_bit7 == 0 && $_bit6 == 0 && $_bit5 == 0 && $_bit4 == 1)
 		        printf "Found a bx Rn\n"
         		set $_nextaddress = $pc+0x4
@@ -2360,7 +2363,7 @@ define stepoframework
             # 32 bits instructions in Thumb are divided into two half words
         	set $_hw1 = *(unsigned short*)($pc)
         	set $_hw2 = *(unsigned short*)($pc+2)
-	
+
         	# bl/blx (immediate)
         	# hw1: bits 15-11: 1 1 1 1 0
         	# hw2: bits 15-14: 1 1 ; BL bit 12: 1 ; BLX bit 12: 0
@@ -2370,7 +2373,7 @@ define stepoframework
 		        end
         	end
         end
-        # if we have found a call to bypass we set a temporary breakpoint on next instruction and continue 
+        # if we have found a call to bypass we set a temporary breakpoint on next instruction and continue
         if ($_nextaddress != 0)
             tbreak *$_nextaddress
             continue
@@ -2404,10 +2407,10 @@ define stepoframework
                 end
                 # call *0x??(%ebp) (0xFF55??) || call *0x??(%esi) (0xFF56??) || call *0x??(%edi) (0xFF5F??) || call *0x??(%ebx)
                 # call *0x??(%edx) (0xFF52??) || call *0x??(%ecx) (0xFF51??) || call *0x??(%edi) (0xFF57??) || call *0x??(%eax) (0xFF50??)
-                if ($_byte2 == 0x55 || $_byte2 == 0x56 || $_byte2 == 0x5F || $_byte2 == 0x53 || $_byte2 == 0x52 || $_byte2 == 0x51 || $_byte2 == 0x57 || $_byte2 == 0x50) 
+                if ($_byte2 == 0x55 || $_byte2 == 0x56 || $_byte2 == 0x5F || $_byte2 == 0x53 || $_byte2 == 0x52 || $_byte2 == 0x51 || $_byte2 == 0x57 || $_byte2 == 0x50)
                     set $_nextaddress = $pc + 0x3
                 end
-                # call *0x????????(%ebx) (0xFF93????????) || 
+                # call *0x????????(%ebx) (0xFF93????????) ||
                 if ($_byte2 == 0x93 || $_byte2 == 0x94 || $_byte2 == 0x90 || $_byte2 == 0x92 || $_byte2 == 0x95 || $_byte2 == 0x15)
                     set $_nextaddress = $pc + 6
                 end
@@ -2425,7 +2428,7 @@ define stepoframework
                end
             end
         end
-        # if we have found a call to bypass we set a temporary breakpoint on next instruction and continue 
+        # if we have found a call to bypass we set a temporary breakpoint on next instruction and continue
         if ($_nextaddress != 0)
             if ($arg0 == 1)
                 thbreak *$_nextaddress
@@ -2676,7 +2679,7 @@ define nop
     if ($argc > 2 || $argc == 0)
         help nop
     end
-  
+
     if $ARM == 1
         if ($argc == 1)
             if ($cpsr->t &1)
@@ -2700,8 +2703,8 @@ define nop
 			    	set *(int *)$addr = 0xe1a00000
 			    	set $addr = $addr + 4
 			    end
-		    end			
-        end 
+		    end
+        end
     else
         if ($argc == 1)
     	    set *(unsigned char *)$arg0 = 0x90
@@ -2725,7 +2728,7 @@ define null
     if ( $argc >2 || $argc == 0)
         help null
     end
- 
+
     if ($argc == 1)
 	    set *(unsigned char *)$arg0 = 0
     else
@@ -2891,11 +2894,11 @@ define get_insn_type
                 set $INSN_TYPE = 2
             end
         end
-        if ($_byte1 == 0xFF)        
+        if ($_byte1 == 0xFF)
             # opcode extension
             set $_byte2 = *(unsigned char *)($arg0 + 1)
             set $_opext = ($_byte2 & 0x38)
-            if ($_opext == 0x10 || $_opext == 0x18) 
+            if ($_opext == 0x10 || $_opext == 0x18)
                 # "call"
                 set $INSN_TYPE = 3
             end
@@ -2919,11 +2922,11 @@ define step_to_call
     set $_saved_ctx = $SHOW_CONTEXT
     set $SHOW_CONTEXT = 0
     set $SHOW_NEST_INSN = 0
- 
+
     set logging file /dev/null
     set logging redirect on
     set logging on
- 
+
     set $_cont = 1
     while ($_cont > 0)
         stepi
@@ -2941,11 +2944,11 @@ define step_to_call
 
     set $SHOW_CONTEXT = $_saved_ctx
     set $SHOW_NEST_INSN = 0
- 
+
     set logging file ~/gdb.txt
     set logging redirect off
     set logging on
- 
+
     printf "step_to_call command stopped at:\n  "
     x/i $pc
     printf "\n"
@@ -2969,7 +2972,7 @@ define trace_calls
     set $SHOW_NEST_INSN = 0
     set $_nest = 1
     set listsize 0
-  
+
     set logging overwrite on
     set logging file ~/gdb_trace_calls.txt
     set logging on
@@ -3011,7 +3014,7 @@ define trace_calls
 
     set $SHOW_CONTEXT = $_saved_ctx
     set $SHOW_NEST_INSN = 0
- 
+
     printf "Done, check ~/gdb_trace_calls.txt\n"
 end
 document trace_calls
@@ -3022,7 +3025,7 @@ end
 
 
 define trace_run
- 
+
     printf "Tracing...please wait...\n"
 
     set $_saved_ctx = $SHOW_CONTEXT
@@ -3069,7 +3072,7 @@ Syntax: trace_run
 end
 
 define entry_point
-	
+
 	set logging redirect on
 	set logging file /tmp/gdb-entry_point
 	set logging on
@@ -3222,7 +3225,7 @@ define assemble
     printf " Do not forget to use NASM assembler syntax!\n"
     color_reset
     printf "End with a line saying just \"end\".\n"
-    
+
     if ($argc)
 	    if ($64BITS == 1)
 		    # argument specified, assemble instructions into memory at address specified.
@@ -3279,7 +3282,7 @@ define assemble32
     printf " Do not forget to use NASM assembler syntax!\n"
     color_reset
     printf "End with a line saying just \"end\".\n"
-    
+
     if ($argc)
         # argument specified, assemble instructions into memory at address specified.
         shell ASMOPCODE="$(while read -ep '>' r && test "$r" != end ; do echo -E "$r"; done)" ; GDBASMFILENAME=$RANDOM; \
@@ -3320,7 +3323,7 @@ define assemble64
     printf " Do not forget to use NASM assembler syntax!\n"
     color_reset
     printf "End with a line saying just \"end\".\n"
-    
+
     if ($argc)
         # argument specified, assemble instructions into memory at address specified.
         shell ASMOPCODE="$(while read -ep '>' r && test "$r" != end ; do echo -E "$r"; done)" ; GDBASMFILENAME=$RANDOM; \
@@ -3538,7 +3541,7 @@ end
 define tip_syntax
     printf "\n"
     printf "\t    INTEL SYNTAX                        AT&T SYNTAX\n"
-    printf "\tmnemonic dest, src, imm            mnemonic src, dest, imm\n" 
+    printf "\tmnemonic dest, src, imm            mnemonic src, dest, imm\n"
     printf "\t[base+index*scale+disp]            disp(base, index, scale)\n"
     printf "\tregister:      eax                 register:      %%eax\n"
     printf "\timmediate:     0xFF                immediate:     $0xFF\n"
@@ -3841,7 +3844,7 @@ end
 #	  - Removed restrictions on type of addresses in the "dd" command - Thanks to Plouj for the warning :-)
 #	   I don't know what was the original thinking behind those :-)
 #	  - Modified the assemble command to support 64bits - You will need to recompile nasm since the version shipped with OS X doesn't supports 64bits (www.nasm.us).
-#	   Assumes that the new binary is installed at /usr/local/bin - modify the variable at the top if you need so. 
+#	   Assumes that the new binary is installed at /usr/local/bin - modify the variable at the top if you need so.
 #	   It will assemble based on the target arch being debugged. If you want to use gdb for a quick asm just use the 32bits or 64bits commands to set your target.
 #      Thanks to snare for the warning and original patch :-)
 #	  - Added "asm" command - it's a shortcut to the "assemble" command.
@@ -3872,7 +3875,7 @@ end
 #
 # 	Version 7.3.1 (29/06/2010) - fG!
 #	  Added enablelib/disablelib command to quickly set the stop-on-solib-events trick
-#	  Implemented the stepoh command equivalent to the stepo but using hardware breakpoints 
+#	  Implemented the stepoh command equivalent to the stepo but using hardware breakpoints
 #	  More fixes to stepo
 #
 #	Version 7.3 (16/04/2010) - fG!
@@ -3965,7 +3968,7 @@ end
 #     Add global variables to allow user to control stack, data and code window sizes
 #     Increase readability for registers
 #     Some corrections (hexdump, ddump, context, cfp, assemble, gas_asm, tips, prompt)
-#   
+#
 #   Version 6.1-color-user
 #     Took the Gentoo route and ran sed s/user/user/g
 #
@@ -3996,3 +3999,711 @@ end
 #
 #   Version 2
 #     Radix bugfix by elaine
+
+#                                                                                                        
+#   STL GDB evaluators/views/utilities - 1.03
+#
+#   The new GDB commands:                                                         
+# 	    are entirely non instrumental                                             
+# 	    do not depend on any "inline"(s) - e.g. size(), [], etc
+#       are extremely tolerant to debugger settings
+#                                                                                 
+#   This file should be "included" in .gdbinit as following:
+#   source stl-views.gdb or just paste it into your .gdbinit file
+#
+#   The following STL containers are currently supported:
+#
+#       std::vector<T> -- via pvector command
+#       std::list<T> -- via plist or plist_member command
+#       std::map<T,T> -- via pmap or pmap_member command
+#       std::multimap<T,T> -- via pmap or pmap_member command
+#       std::set<T> -- via pset command
+#       std::multiset<T> -- via pset command
+#       std::deque<T> -- via pdequeue command
+#       std::stack<T> -- via pstack command
+#       std::queue<T> -- via pqueue command
+#       std::priority_queue<T> -- via ppqueue command
+#       std::bitset<n> -- via pbitset command
+#       std::string -- via pstring command
+#       std::widestring -- via pwstring command
+#
+#   The end of this file contains (optional) C++ beautifiers
+#   Make sure your debugger supports $argc
+#
+#   Simple GDB Macros writen by Dan Marinescu (H-PhD) - License GPL
+#   Inspired by intial work of Tom Malnar, 
+#     Tony Novac (PhD) / Cornell / Stanford,
+#     Gilad Mishne (PhD) and Many Many Others.
+#   Contact: dan_c_marinescu@yahoo.com (Subject: STL)
+#
+#   Modified to work with g++ 4.3 by Anders Elton
+#   Also added _member functions, that instead of printing the entire class in map, prints a member.
+
+
+
+#
+# std::vector<>
+#
+
+define pvector
+	if $argc == 0
+		help pvector
+	else
+		set $size = $arg0._M_impl._M_finish - $arg0._M_impl._M_start
+		set $capacity = $arg0._M_impl._M_end_of_storage - $arg0._M_impl._M_start
+		set $size_max = $size - 1
+	end
+	if $argc == 1
+		set $i = 0
+		while $i < $size
+			printf "elem[%u]: ", $i
+			p *($arg0._M_impl._M_start + $i)
+			set $i++
+		end
+	end
+	if $argc == 2
+		set $idx = $arg1
+		if $idx < 0 || $idx > $size_max
+			printf "idx1, idx2 are not in acceptable range: [0..%u].\n", $size_max
+		else
+			printf "elem[%u]: ", $idx
+			p *($arg0._M_impl._M_start + $idx)
+		end
+	end
+	if $argc == 3
+	  set $start_idx = $arg1
+	  set $stop_idx = $arg2
+	  if $start_idx > $stop_idx
+	    set $tmp_idx = $start_idx
+	    set $start_idx = $stop_idx
+	    set $stop_idx = $tmp_idx
+	  end
+	  if $start_idx < 0 || $stop_idx < 0 || $start_idx > $size_max || $stop_idx > $size_max
+	    printf "idx1, idx2 are not in acceptable range: [0..%u].\n", $size_max
+	  else
+	    set $i = $start_idx
+		while $i <= $stop_idx
+			printf "elem[%u]: ", $i
+			p *($arg0._M_impl._M_start + $i)
+			set $i++
+		end
+	  end
+	end
+	if $argc > 0
+		printf "Vector size = %u\n", $size
+		printf "Vector capacity = %u\n", $capacity
+		printf "Element "
+		whatis $arg0._M_impl._M_start
+	end
+end
+
+document pvector
+	Prints std::vector<T> information.
+	Syntax: pvector <vector> <idx1> <idx2>
+	Note: idx, idx1 and idx2 must be in acceptable range [0..<vector>.size()-1].
+	Examples:
+	pvector v - Prints vector content, size, capacity and T typedef
+	pvector v 0 - Prints element[idx] from vector
+	pvector v 1 2 - Prints elements in range [idx1..idx2] from vector
+end 
+
+#
+# std::list<>
+#
+
+define plist
+	if $argc == 0
+		help plist
+	else
+		set $head = &$arg0._M_impl._M_node
+		set $current = $arg0._M_impl._M_node._M_next
+		set $size = 0
+		while $current != $head
+			if $argc == 2
+				printf "elem[%u]: ", $size
+				p *($arg1*)($current + 1)
+			end
+			if $argc == 3
+				if $size == $arg2
+					printf "elem[%u]: ", $size
+					p *($arg1*)($current + 1)
+				end
+			end
+			set $current = $current._M_next
+			set $size++
+		end
+		printf "List size = %u \n", $size
+		if $argc == 1
+			printf "List "
+			whatis $arg0
+			printf "Use plist <variable_name> <element_type> to see the elements in the list.\n"
+		end
+	end
+end
+
+document plist
+	Prints std::list<T> information.
+	Syntax: plist <list> <T> <idx>: Prints list size, if T defined all elements or just element at idx
+	Examples:
+	plist l - prints list size and definition
+	plist l int - prints all elements and list size
+	plist l int 2 - prints the third element in the list (if exists) and list size
+end
+
+define plist_member
+	if $argc == 0
+		help plist_member
+	else
+		set $head = &$arg0._M_impl._M_node
+		set $current = $arg0._M_impl._M_node._M_next
+		set $size = 0
+		while $current != $head
+			if $argc == 3
+				printf "elem[%u]: ", $size
+				p (*($arg1*)($current + 1)).$arg2
+			end
+			if $argc == 4
+				if $size == $arg3
+					printf "elem[%u]: ", $size
+					p (*($arg1*)($current + 1)).$arg2
+				end
+			end
+			set $current = $current._M_next
+			set $size++
+		end
+		printf "List size = %u \n", $size
+		if $argc == 1
+			printf "List "
+			whatis $arg0
+			printf "Use plist_member <variable_name> <element_type> <member> to see the elements in the list.\n"
+		end
+	end
+end
+
+document plist_member
+	Prints std::list<T> information.
+	Syntax: plist <list> <T> <idx>: Prints list size, if T defined all elements or just element at idx
+	Examples:
+	plist_member l int member - prints all elements and list size
+	plist_member l int member 2 - prints the third element in the list (if exists) and list size
+end
+
+
+#
+# std::map and std::multimap
+#
+
+define pmap
+	if $argc == 0
+		help pmap
+	else
+		set $tree = $arg0
+		set $i = 0
+		set $node = $tree._M_t._M_impl._M_header._M_left
+		set $end = $tree._M_t._M_impl._M_header
+		set $tree_size = $tree._M_t._M_impl._M_node_count
+		if $argc == 1
+			printf "Map "
+			whatis $tree
+			printf "Use pmap <variable_name> <left_element_type> <right_element_type> to see the elements in the map.\n"
+		end
+		if $argc == 3
+			while $i < $tree_size
+				set $value = (void *)($node + 1)
+				printf "elem[%u].left: ", $i
+				p *($arg1*)$value
+				set $value = $value + sizeof($arg1)
+				printf "elem[%u].right: ", $i
+				p *($arg2*)$value
+				if $node._M_right != 0
+					set $node = $node._M_right
+					while $node._M_left != 0
+						set $node = $node._M_left
+					end
+				else
+					set $tmp_node = $node._M_parent
+					while $node == $tmp_node._M_right
+						set $node = $tmp_node
+						set $tmp_node = $tmp_node._M_parent
+					end
+					if $node._M_right != $tmp_node
+						set $node = $tmp_node
+					end
+				end
+				set $i++
+			end
+		end
+		if $argc == 4
+			set $idx = $arg3
+			set $ElementsFound = 0
+			while $i < $tree_size
+				set $value = (void *)($node + 1)
+				if *($arg1*)$value == $idx
+					printf "elem[%u].left: ", $i
+					p *($arg1*)$value
+					set $value = $value + sizeof($arg1)
+					printf "elem[%u].right: ", $i
+					p *($arg2*)$value
+					set $ElementsFound++
+				end
+				if $node._M_right != 0
+					set $node = $node._M_right
+					while $node._M_left != 0
+						set $node = $node._M_left
+					end
+				else
+					set $tmp_node = $node._M_parent
+					while $node == $tmp_node._M_right
+						set $node = $tmp_node
+						set $tmp_node = $tmp_node._M_parent
+					end
+					if $node._M_right != $tmp_node
+						set $node = $tmp_node
+					end
+				end
+				set $i++
+			end
+			printf "Number of elements found = %u\n", $ElementsFound
+		end
+		if $argc == 5
+			set $idx1 = $arg3
+			set $idx2 = $arg4
+			set $ElementsFound = 0
+			while $i < $tree_size
+				set $value = (void *)($node + 1)
+				set $valueLeft = *($arg1*)$value
+				set $valueRight = *($arg2*)($value + sizeof($arg1))
+				if $valueLeft == $idx1 && $valueRight == $idx2
+					printf "elem[%u].left: ", $i
+					p $valueLeft
+					printf "elem[%u].right: ", $i
+					p $valueRight
+					set $ElementsFound++
+				end
+				if $node._M_right != 0
+					set $node = $node._M_right
+					while $node._M_left != 0
+						set $node = $node._M_left
+					end
+				else
+					set $tmp_node = $node._M_parent
+					while $node == $tmp_node._M_right
+						set $node = $tmp_node
+						set $tmp_node = $tmp_node._M_parent
+					end
+					if $node._M_right != $tmp_node
+						set $node = $tmp_node
+					end
+				end
+				set $i++
+			end
+			printf "Number of elements found = %u\n", $ElementsFound
+		end
+		printf "Map size = %u\n", $tree_size
+	end
+end
+
+document pmap
+	Prints std::map<TLeft and TRight> or std::multimap<TLeft and TRight> information. Works for std::multimap as well.
+	Syntax: pmap <map> <TtypeLeft> <TypeRight> <valLeft> <valRight>: Prints map size, if T defined all elements or just element(s) with val(s)
+	Examples:
+	pmap m - prints map size and definition
+	pmap m int int - prints all elements and map size
+	pmap m int int 20 - prints the element(s) with left-value = 20 (if any) and map size
+	pmap m int int 20 200 - prints the element(s) with left-value = 20 and right-value = 200 (if any) and map size
+end
+
+
+define pmap_member
+	if $argc == 0
+		help pmap_member
+	else
+		set $tree = $arg0
+		set $i = 0
+		set $node = $tree._M_t._M_impl._M_header._M_left
+		set $end = $tree._M_t._M_impl._M_header
+		set $tree_size = $tree._M_t._M_impl._M_node_count
+		if $argc == 1
+			printf "Map "
+			whatis $tree
+			printf "Use pmap <variable_name> <left_element_type> <right_element_type> to see the elements in the map.\n"
+		end
+		if $argc == 5
+			while $i < $tree_size
+				set $value = (void *)($node + 1)
+				printf "elem[%u].left: ", $i
+				p (*($arg1*)$value).$arg2
+				set $value = $value + sizeof($arg1)
+				printf "elem[%u].right: ", $i
+				p (*($arg3*)$value).$arg4
+				if $node._M_right != 0
+					set $node = $node._M_right
+					while $node._M_left != 0
+						set $node = $node._M_left
+					end
+				else
+					set $tmp_node = $node._M_parent
+					while $node == $tmp_node._M_right
+						set $node = $tmp_node
+						set $tmp_node = $tmp_node._M_parent
+					end
+					if $node._M_right != $tmp_node
+						set $node = $tmp_node
+					end
+				end
+				set $i++
+			end
+		end
+		if $argc == 6
+			set $idx = $arg5
+			set $ElementsFound = 0
+			while $i < $tree_size
+				set $value = (void *)($node + 1)
+				if *($arg1*)$value == $idx
+					printf "elem[%u].left: ", $i
+					p (*($arg1*)$value).$arg2
+					set $value = $value + sizeof($arg1)
+					printf "elem[%u].right: ", $i
+					p (*($arg3*)$value).$arg4
+					set $ElementsFound++
+				end
+				if $node._M_right != 0
+					set $node = $node._M_right
+					while $node._M_left != 0
+						set $node = $node._M_left
+					end
+				else
+					set $tmp_node = $node._M_parent
+					while $node == $tmp_node._M_right
+						set $node = $tmp_node
+						set $tmp_node = $tmp_node._M_parent
+					end
+					if $node._M_right != $tmp_node
+						set $node = $tmp_node
+					end
+				end
+				set $i++
+			end
+			printf "Number of elements found = %u\n", $ElementsFound
+		end
+		printf "Map size = %u\n", $tree_size
+	end
+end
+
+document pmap_member
+	Prints std::map<TLeft and TRight> or std::multimap<TLeft and TRight> information. Works for std::multimap as well.
+	Syntax: pmap <map> <TtypeLeft> <TypeRight> <valLeft> <valRight>: Prints map size, if T defined all elements or just element(s) with val(s)
+	Examples:
+	pmap_member m class1 member1 class2 member2 - prints class1.member1 : class2.member2
+	pmap_member m class1 member1 class2 member2 lvalue - prints class1.member1 : class2.member2 where class1 == lvalue
+end
+
+
+#
+# std::set and std::multiset
+#
+
+define pset
+	if $argc == 0
+		help pset
+	else
+		set $tree = $arg0
+		set $i = 0
+		set $node = $tree._M_t._M_impl._M_header._M_left
+		set $end = $tree._M_t._M_impl._M_header
+		set $tree_size = $tree._M_t._M_impl._M_node_count
+		if $argc == 1
+			printf "Set "
+			whatis $tree
+			printf "Use pset <variable_name> <element_type> to see the elements in the set.\n"
+		end
+		if $argc == 2
+			while $i < $tree_size
+				set $value = (void *)($node + 1)
+				printf "elem[%u]: ", $i
+				p *($arg1*)$value
+				if $node._M_right != 0
+					set $node = $node._M_right
+					while $node._M_left != 0
+						set $node = $node._M_left
+					end
+				else
+					set $tmp_node = $node._M_parent
+					while $node == $tmp_node._M_right
+						set $node = $tmp_node
+						set $tmp_node = $tmp_node._M_parent
+					end
+					if $node._M_right != $tmp_node
+						set $node = $tmp_node
+					end
+				end
+				set $i++
+			end
+		end
+		if $argc == 3
+			set $idx = $arg2
+			set $ElementsFound = 0
+			while $i < $tree_size
+				set $value = (void *)($node + 1)
+				if *($arg1*)$value == $idx
+					printf "elem[%u]: ", $i
+					p *($arg1*)$value
+					set $ElementsFound++
+				end
+				if $node._M_right != 0
+					set $node = $node._M_right
+					while $node._M_left != 0
+						set $node = $node._M_left
+					end
+				else
+					set $tmp_node = $node._M_parent
+					while $node == $tmp_node._M_right
+						set $node = $tmp_node
+						set $tmp_node = $tmp_node._M_parent
+					end
+					if $node._M_right != $tmp_node
+						set $node = $tmp_node
+					end
+				end
+				set $i++
+			end
+			printf "Number of elements found = %u\n", $ElementsFound
+		end
+		printf "Set size = %u\n", $tree_size
+	end
+end
+
+document pset
+	Prints std::set<T> or std::multiset<T> information. Works for std::multiset as well.
+	Syntax: pset <set> <T> <val>: Prints set size, if T defined all elements or just element(s) having val
+	Examples:
+	pset s - prints set size and definition
+	pset s int - prints all elements and the size of s
+	pset s int 20 - prints the element(s) with value = 20 (if any) and the size of s
+end
+
+
+
+#
+# std::dequeue
+#
+
+define pdequeue
+	if $argc == 0
+		help pdequeue
+	else
+		set $size = 0
+		set $start_cur = $arg0._M_impl._M_start._M_cur
+		set $start_last = $arg0._M_impl._M_start._M_last
+		set $start_stop = $start_last
+		while $start_cur != $start_stop
+			p *$start_cur
+			set $start_cur++
+			set $size++
+		end
+		set $finish_first = $arg0._M_impl._M_finish._M_first
+		set $finish_cur = $arg0._M_impl._M_finish._M_cur
+		set $finish_last = $arg0._M_impl._M_finish._M_last
+		if $finish_cur < $finish_last
+			set $finish_stop = $finish_cur
+		else
+			set $finish_stop = $finish_last
+		end
+		while $finish_first != $finish_stop
+			p *$finish_first
+			set $finish_first++
+			set $size++
+		end
+		printf "Dequeue size = %u\n", $size
+	end
+end
+
+document pdequeue
+	Prints std::dequeue<T> information.
+	Syntax: pdequeue <dequeue>: Prints dequeue size, if T defined all elements
+	Deque elements are listed "left to right" (left-most stands for front and right-most stands for back)
+	Example:
+	pdequeue d - prints all elements and size of d
+end
+
+
+
+#
+# std::stack
+#
+
+define pstack
+	if $argc == 0
+		help pstack
+	else
+		set $start_cur = $arg0.c._M_impl._M_start._M_cur
+		set $finish_cur = $arg0.c._M_impl._M_finish._M_cur
+		set $size = $finish_cur - $start_cur
+        set $i = $size - 1
+        while $i >= 0
+            p *($start_cur + $i)
+            set $i--
+        end
+		printf "Stack size = %u\n", $size
+	end
+end
+
+document pstack
+	Prints std::stack<T> information.
+	Syntax: pstack <stack>: Prints all elements and size of the stack
+	Stack elements are listed "top to buttom" (top-most element is the first to come on pop)
+	Example:
+	pstack s - prints all elements and the size of s
+end
+
+
+
+#
+# std::queue
+#
+
+define pqueue
+	if $argc == 0
+		help pqueue
+	else
+		set $start_cur = $arg0.c._M_impl._M_start._M_cur
+		set $finish_cur = $arg0.c._M_impl._M_finish._M_cur
+		set $size = $finish_cur - $start_cur
+        set $i = 0
+        while $i < $size
+            p *($start_cur + $i)
+            set $i++
+        end
+		printf "Queue size = %u\n", $size
+	end
+end
+
+document pqueue
+	Prints std::queue<T> information.
+	Syntax: pqueue <queue>: Prints all elements and the size of the queue
+	Queue elements are listed "top to bottom" (top-most element is the first to come on pop)
+	Example:
+	pqueue q - prints all elements and the size of q
+end
+
+
+
+#
+# std::priority_queue
+#
+
+define ppqueue
+	if $argc == 0
+		help ppqueue
+	else
+		set $size = $arg0.c._M_impl._M_finish - $arg0.c._M_impl._M_start
+		set $capacity = $arg0.c._M_impl._M_end_of_storage - $arg0.c._M_impl._M_start
+		set $i = $size - 1
+		while $i >= 0
+			p *($arg0.c._M_impl._M_start + $i)
+			set $i--
+		end
+		printf "Priority queue size = %u\n", $size
+		printf "Priority queue capacity = %u\n", $capacity
+	end
+end
+
+document ppqueue
+	Prints std::priority_queue<T> information.
+	Syntax: ppqueue <priority_queue>: Prints all elements, size and capacity of the priority_queue
+	Priority_queue elements are listed "top to buttom" (top-most element is the first to come on pop)
+	Example:
+	ppqueue pq - prints all elements, size and capacity of pq
+end
+
+
+
+#
+# std::bitset
+#
+
+define pbitset
+	if $argc == 0
+		help pbitset
+	else
+        p /t $arg0._M_w
+	end
+end
+
+document pbitset
+	Prints std::bitset<n> information.
+	Syntax: pbitset <bitset>: Prints all bits in bitset
+	Example:
+	pbitset b - prints all bits in b
+end
+
+
+
+#
+# std::string
+#
+
+define pstring
+	if $argc == 0
+		help pstring
+	else
+		printf "String \t\t\t= \"%s\"\n", $arg0._M_data()
+		printf "String size/length \t= %u\n", $arg0._M_rep()._M_length
+		printf "String capacity \t= %u\n", $arg0._M_rep()._M_capacity
+		printf "String ref-count \t= %d\n", $arg0._M_rep()._M_refcount
+	end
+end
+
+document pstring
+	Prints std::string information.
+	Syntax: pstring <string>
+	Example:
+	pstring s - Prints content, size/length, capacity and ref-count of string s
+end 
+
+#
+# std::wstring
+#
+
+define pwstring
+	if $argc == 0
+		help pwstring
+	else
+		call printf("WString \t\t= \"%ls\"\n", $arg0._M_data())
+		printf "WString size/length \t= %u\n", $arg0._M_rep()._M_length
+		printf "WString capacity \t= %u\n", $arg0._M_rep()._M_capacity
+		printf "WString ref-count \t= %d\n", $arg0._M_rep()._M_refcount
+	end
+end
+
+document pwstring
+	Prints std::wstring information.
+	Syntax: pwstring <wstring>
+	Example:
+	pwstring s - Prints content, size/length, capacity and ref-count of wstring s
+end 
+
+#
+# C++ related beautifiers (optional)
+#
+
+set print pretty on
+set print object on
+set print static-members on
+set print vtbl on
+set print demangle on
+set demangle-style gnu-v3
+set print sevenbit-strings off
+
+define -
+        stepi
+end
+document -
+short for stepi
+end
+
+shell clear
+printf "type help user to see the customized commands\n"
+printf "Program start address is: "
+shell ps -uxw 2> /dev/null | grep -w gdb | grep -v grep | sed 's/.*gdb//' | sed 's/^ *//' | sed 's/.* //' | grep -v // | tail -n 1 | xargs objdump -f 2> /dev/null | grep -i "^start " | sed 's/.* 0x/0x/'
+printf "\n"
